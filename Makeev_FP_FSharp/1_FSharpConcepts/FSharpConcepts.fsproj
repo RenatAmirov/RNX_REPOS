@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Тип выходных данных: исполняемое консольное приложение -->
+    <OutputType>Exe</OutputType>
+    <!-- Целевая платформа .NET 8 (можно изменить на net6.0, net7.0) -->
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Подключаемый файл исходного кода -->
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+</Project>

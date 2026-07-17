@@ -1,0 +1,44 @@
+name:                HaskellDemo
+version:             0.1.0.0
+github:              "username/HaskellDemo"
+license:             BSD3
+author:              "Your Name"
+maintainer:          "your@email.com"
+copyright:           "2026"
+
+extra-source-files:
+  - README.md
+
+# Описание метаданных
+description:         Демонстрационное консольное приложение на Haskell,
+                     иллюстрирующее функции, операторы, полиморфизм и классы типов.
+
+dependencies:
+  - base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+
+executables:
+  HaskellDemo:
+    main: Main.hs
+    source-dirs: app
+    ghc-options:
+      - -Wall
+      - -Wcompat
+      - -Widentities
+      - -Wincomplete-record-updates
+      - -Wincomplete-uni-patterns
+      - -Wmissing-export-lists
+      - -Wmissing-home-modules
+      - -Wpartial-fields
+      - -Wredundant-constraints
+    dependencies:
+      - HaskellDemo
+
+tests:
+  HaskellDemo-test:
+    main: Spec.hs
+    source-dirs: test
+    dependencies:
+      - HaskellDemo

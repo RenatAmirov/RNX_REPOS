@@ -1,0 +1,20 @@
+﻿<!-- FSharpTypesDemo.fsproj -->
+<!-- Проект консольного приложения на F# для .NET -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Тип выходного файла: Exe (консольное приложение) -->
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<!-- Целевая среда выполнения: .NET 8 (можно заменить на net9.0 или другую) -->
+		<TargetFramework>net8.0</TargetFramework>
+		<!-- Включает неявное объявление точки входа, если используется стартовая функция -->
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<!-- Компилируемый файл исходного кода -->
+	<ItemGroup>
+		<Compile Include="Program.fs" />
+	</ItemGroup>
+
+</Project>

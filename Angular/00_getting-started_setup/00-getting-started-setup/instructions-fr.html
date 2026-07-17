@@ -1,0 +1,453 @@
+
+<div id="header">
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_getting_started">Getting started</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Pr&#xe9;-requis Angular</strong> Chapitre &apos;Commencer de z&#xe9;ro&apos;</p>
+</div>
+<div id="files" class="openblock">
+<div class="content">
+<div class="paragraph">
+<p><strong>Fichiers</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="ponyracer/exercise.json">exercise.json</a></p>
+</li>
+<li>
+<p><a href="ponyracer/package.json">package.json</a></p>
+</li>
+<li>
+<p><a href="ponyracer/.prettierrc">.prettierrc</a></p>
+</li>
+<li>
+<p><a href="ponyracer/angular.json">angular.json</a></p>
+</li>
+<li>
+<p><a href="ponyracer/tsconfig.json">tsconfig.json</a></p>
+</li>
+<li>
+<p><a href="ponyracer/tsconfig.spec.json">tsconfig.spec.json</a></p>
+</li>
+<li>
+<p><a href="ponyracer/src/app/app.spec.ts">src/app/app.spec.ts</a></p>
+</li>
+<li>
+<p><a href="ponyracer/e2e/home.e2e-spec.ts">e2e/home.e2e-spec.ts</a></p>
+</li>
+<li>
+<p><a href="ponyracer/e2e/tsconfig.json">e2e/tsconfig.json</a></p>
+</li>
+<li>
+<p><a href="ponyracer/playwright.config.ts">playwright.config.ts</a></p>
+</li>
+<li>
+<p><a href="ponyracer/eslint.config.mjs">eslint.config.mjs</a></p>
+</li>
+<li>
+<p><a href="ponyracer/vitest-base.config.ts">vitest-base.config.ts</a></p>
+</li>
+<li>
+<p><a href="ponyracer/src/setup-test.ts">src/setup-test.ts</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Pour cette premi&#xe8;re &#xe9;tape, nous allons g&#xe9;n&#xe9;rer le squelette de notre projet.
+Le plus simple pour cela est d&#x2019;utiliser Angular CLI.</p>
+</div>
+<div class="sect2">
+<h3 id="_installation_dangular_cli">Installation d&#x2019;Angular CLI</h3>
+<div class="paragraph">
+<p>Note: Si vous avez d&#xe9;j&#xe0; une version de Angular CLI,
+vous devez d&#x2019;abord la d&#xe9;sinstaller avec <code>npm uninstall -g @angular/cli</code></p>
+</div>
+<div class="paragraph">
+<p>Commen&#xe7;ons donc par installer cet outil&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">npm install -g @angular/cli@22.0.0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cela ajoute un ex&#xe9;cutable nomm&#xe9; <code>ng</code> &#xe0; votre ligne de commande.
+Vous devriez pouvoir v&#xe9;rifier la version avec&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng version</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Cela devrait afficher la version sp&#xe9;cifi&#xe9;e apr&#xe8;s le <code>@</code> dans la commande d&#x2019;installation.
+Sinon consultez la FAQ sur l&#x2019;installation et la mise &#xe0; jour de Angular CLI.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_g&#xe9;n&#xe9;ration_du_projet">G&#xe9;n&#xe9;ration du projet</h3>
+<div class="paragraph">
+<p>Puis placez-vous dans un dossier fra&#xee;chement cr&#xe9;&#xe9; et entrez&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng new ponyracer <span class="token parameter variable">--defaults</span> --no-routing <span class="token parameter variable">--prefix</span> <span class="token function">pr</span> --skip-install</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>pour g&#xe9;n&#xe9;rer un nouveau projet.</p>
+</div>
+<div class="paragraph">
+<p>Apr&#xe8;s quelques secondes (voire minutes), vous devriez voir appara&#xee;tre un nouveau dossier,
+nomm&#xe9; <code>ponyracer</code> (selon votre environnement vous aurez peut-&#xea;tre quelques warnings, rien de grave).</p>
+</div>
+<div class="paragraph">
+<p>Remplacez ensuite le fichier <code>package.json</code> &#xe0; la racine de votre application
+(soit directement en cliquant sur le fichier ci-dessus dans la section &quot;Resources&quot; ou depuis le zip &quot;Setup&quot; t&#xe9;l&#xe9;charg&#xe9; contenant tous ces fichiers),
+pour ajouter quelques d&#xe9;pendances, notamment <code>ng2ninja</code> qui sera responsable d&#x2019;analyser votre code
+et de soumettre vos r&#xe9;sultats au site.</p>
+</div>
+<div class="paragraph">
+<p>Lancez maintenant <code>npm install</code> dans le projet pour t&#xe9;l&#xe9;charger les d&#xe9;pendances&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash"><span class="token function">npm</span> <span class="token function">install</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>NPM va peut-&#xea;tre vous proposer de lancer une commande d&#x2019;audit &#xe0; la fin de l&#x2019;installation&#xa0;:
+m&#xea;me si c&#x2019;est tentant, ne la lancez pas,
+car cela va r&#xe9;cup&#xe9;rer des versions possiblement incompatibles avec notre projet.</p>
+</div>
+<div class="paragraph">
+<p>Si l&#x2019;installation &#xe9;choue &#xe0; cause d&#x2019;une d&#xe9;pendance incompatible,
+ex&#xe9;cutez la commande de configuration suivante&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash"><span class="token function">npm</span> config <span class="token builtin class-name">set</span> legacy-peer-deps<span class="token operator">=</span>true <span class="token parameter variable">--location</span><span class="token operator">=</span>project</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Et essayez la commande <code>npm install</code> &#xe0; nouveau.</p>
+</div>
+<div class="paragraph">
+<p>Angular CLI g&#xe9;n&#xe8;re un fichier de configuration Prettier par d&#xe9;faut (<code>.prettierrc</code>) lors de la cr&#xe9;ation d&#x2019;un nouveau projet.
+Remplacez-le par celui fourni dans les ressources pour utiliser nos r&#xe8;gles de formatage personnalis&#xe9;es.</p>
+</div>
+<div class="paragraph">
+<p>Depuis la CLI v12, il n&#x2019;y a plus de tests de bout en bout (end-to-end ou e2e) par d&#xe9;faut.
+Nous devons choisir une biblioth&#xe8;que de test e2e,
+et l&#x2019;ajouter au projet.</p>
+</div>
+<div class="paragraph">
+<p>Nous allons utiliser <a href="https://playwright.dev/">Playwright</a>.
+On pourrait le configurer &#xe0; la main,
+mais le plus simple est d&#x2019;utiliser une &quot;schematic&quot;.
+La CLI est un outil tr&#xe8;s puissant.
+Elle permet aux d&#xe9;veloppeurs de b&#xe2;tir leurs propres &quot;extensions&quot; de la CLI (appel&#xe9;es &quot;builders&quot;),
+et leurs propres g&#xe9;n&#xe9;rateurs de code (appel&#xe9;s &quot;schematics&quot;).</p>
+</div>
+<div class="paragraph">
+<p>Cette <a href="https://github.com/playwright-community/playwright-ng-schematics">Playwright schematic</a>
+est la schematic fournie par la communaut&#xe9; que nous allons utiliser
+pour ajouter Playwright &#xe0; notre projet&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">cd ponyracer
+ng add playwright-ng-schematics@21.1.0 --install-browsers --skip-confirmation</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Si l&#x2019;installation &#xe9;choue &#xe0; cause des <em>peer dependencies</em>, ex&#xe9;cutez&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash"><span class="token function">npm</span> config <span class="token builtin class-name">set</span> legacy-peer-deps<span class="token operator">=</span>true <span class="token parameter variable">--location</span><span class="token operator">=</span>project</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Et essayez la commande <code>ng add</code> &#xe0; nouveau.</p>
+</div>
+<div class="paragraph">
+<p>Pendant longtemps, la CLI incluait &#xe9;galement l&#x2019;outil TSLint par d&#xe9;faut pour v&#xe9;rifier notre code.
+Mais TSLint est maintenant d&#xe9;pr&#xe9;ci&#xe9;, il n&#x2019;est donc plus inclus depuis la CLI v12.
+Pas d&#x2019;inqui&#xe9;tude cependant&#xa0;: nous allons utiliser ESLint &#xe0; la place.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng add angular-eslint@21.4.0 --skip-confirmation</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Parfait, tout est install&#xe9;, on peut passer &#xe0; la suite.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_d&#xe9;marrer_lapplication">D&#xe9;marrer l&#x2019;application</h3>
+<div class="paragraph">
+<p>Mettez maintenant &#xe0; jour la configuration de la CLI
+en rempla&#xe7;ant le fichier <code>angular.json</code> file par celui fourni.</p>
+</div>
+<div class="paragraph">
+<p>Tout est d&#xe9;j&#xe0; configur&#xe9; pour nous&#xa0;: l&#x2019;outil de build, les d&#xe9;pendances, les tests,
+et m&#xea;me nos premiers composants&#xa0;!</p>
+</div>
+<div class="paragraph">
+<p>Le projet est par d&#xe9;faut sous Git, et utilise <a href="https://vitejs.dev/">Vite</a> pour &#xea;tre construit.</p>
+</div>
+<div class="paragraph">
+<p>Vous pouvez vous placer dans ce dossier <code>ponyracer</code> et d&#xe9;marrer le projet localement avec:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng serve</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Puis ouvrir votre navigateur &#xe0; l&#x2019;adresse <a href="http://localhost:4200" class="bare">http://localhost:4200</a></p>
+</div>
+<div class="paragraph">
+<p>Vous devriez voir la page d&#x2019;accueil s&#x2019;afficher.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_un_peu_de_style">Un peu de style</h3>
+<div class="paragraph">
+<p>Allons voir le code maintenant.</p>
+</div>
+<div class="paragraph">
+<p>Ouvrez le projet avec votre IDE pr&#xe9;f&#xe9;r&#xe9;.
+<a href="https://code.visualstudio.com/">Visual Studio Code</a> est par exemple gratuit, disponible pour tous les syst&#xe8;mes d&#x2019;exploitation,
+et poss&#xe8;de un tr&#xe8;s bon support de TypeScript.
+Tu peux lui ajouter le plugin <a href="https://marketplace.visualstudio.com/items?itemName=Angular.ng-template">Angular Language Service</a>
+qui donne le support d&#x2019;Angular,
+ainsi que le plugin <a href="https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint">ESLint</a>.</p>
+</div>
+<div class="paragraph">
+<p>Vous pouvez voir que notre application se situe dans le r&#xe9;pertoire <code>src</code>.</p>
+</div>
+<div class="paragraph">
+<p>Commen&#xe7;ons par essayer de rendre cette application un peu plus jolie.
+Mes faibles comp&#xe9;tences en CSS m&#x2019;am&#xe8;ne souvent &#xe0; utiliser l&#x2019;excellent
+<a href="https://getbootstrap.com">Bootstrap</a>.</p>
+</div>
+<div class="paragraph">
+<p>Installons donc <code>bootstrap</code> et <code>fontawesome</code>&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">npm install --save-exact bootstrap@5.3.8 @fortawesome/fontawesome-free@7.2.0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Nous devons maintenant utiliser ces styles dans notre application.
+Ouvrez le fichier <code>styles.css</code> et ajoutez les imports suivants&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="title">styles.css</div>
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-css"><code class="language-css" data-lang="css"><span class="token atrule"><span class="token rule">@import</span> <span class="token string">&apos;bootstrap/dist/css/bootstrap.css&apos;</span><span class="token punctuation">;</span></span>
+<span class="token atrule"><span class="token rule">@import</span> <span class="token string">&apos;@fortawesome/fontawesome-free/css/all.css&apos;</span><span class="token punctuation">;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Puis dans le template du composant <code>app.html</code>, rempla&#xe7;ons le contenu par&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="title">app.html</div>
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-html"><code class="language-html" data-lang="html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>main</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">&quot;</span>container<span class="token punctuation">&quot;</span></span> <span class="token special-attr"><span class="token attr-name">style</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">&quot;</span><span class="token value css language-css"><span class="token property">margin-top</span><span class="token punctuation">:</span> 70px<span class="token punctuation">;</span></span><span class="token punctuation">&quot;</span></span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Ponyracer<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>main</span><span class="token punctuation">&gt;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Relancez la t&#xe2;che <code>ng serve</code> et votre navigateur
+devrait se rafra&#xee;chir automatiquement et afficher notre nouveau template.</p>
+</div>
+<div class="paragraph">
+<p>La configuration TypeScript est dans le fichier <code>tsconfig.json</code>,
+et, comme nous l&#x2019;avons vu, le compilateur va nous aider &#xe0; &#xe9;crire du bon code.
+Nous pouvons ajouter quelques options au compilateur pour le rendre un peu plus strict
+et l&#x2019;aider &#xe0; trouver d&#x2019;autres erreurs potentielles dans notre code.
+Remplacez le fichier g&#xe9;n&#xe9;r&#xe9; par la CLI par celui fourni dans les ressources.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tests_unitaires">Tests unitaires</h3>
+<div class="paragraph">
+<p>Reste maintenant &#xe0; ajouter de quoi valider nos exercices&#xa0;!</p>
+</div>
+<div class="paragraph">
+<p>Copiez le fichier <code>exercise.json</code> &#xe0; la racine de votre application
+qui permet &#xe0; notre script de savoir quel est l&#x2019;exercice en cours.</p>
+</div>
+<div class="paragraph">
+<p>Configurons Vitest en ajoutant un fichier de configuration&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng generate config vitest</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Puis remplacez le fichier <code>vitest-base.config.ts</code> g&#xe9;n&#xe9;r&#xe9; &#xe0; la racine de votre application
+par celui fourni dans les ressources.</p>
+</div>
+<div class="paragraph">
+<p>Copiez le fichier <code>tsconfig.spec.json</code> &#xe0; la racine de votre application,
+et copiez &#xe9;galement le fichier <code>setup-test.ts</code> dans le dossier <code>src</code>.
+Ce fichier configure l&#x2019;environnement de test Vitest&#xa0;:
+il ajoute une v&#xe9;rification pour s&#x2019;assurer qu&#x2019;aucune erreur console ne se produit pendant les tests,
+et &#xe9;tend Vitest avec une m&#xe9;thode utilitaire.</p>
+</div>
+<div class="paragraph">
+<p>Commen&#xe7;ons par voir si les tests unitaires sont OK.
+Cr&#xe9;ez un dossier <code>results</code> &#xe0; la racine de votre projet.
+Puis remplacez <code>app.spec.ts</code> dans votre projet (<code>src/app</code>) par celui fourni dans les ressources,
+et lancez&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng <span class="token builtin class-name">test</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Par d&#xe9;faut, les tests sont en mode &quot;watch&quot;,
+ce qui signifie qu&#x2019;ils vont se relancer &#xe0; chaque modification de fichier.
+Pour ex&#xe9;cuter les tests une seule fois, vous pouvez lancer&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng <span class="token builtin class-name">test</span> --no-watch</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vous pouvez aussi afficher une UI avec l&#x2019;option <code>--ui</code>.</p>
+</div>
+<div class="paragraph">
+<p>Les tests v&#xe9;rifieront aussi la couverture de code de votre application.
+Pour lancer les tests avec la couverture de code, utilisez l&#x2019;option <code>--coverage</code>&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng <span class="token builtin class-name">test</span> <span class="token parameter variable">--coverage</span> --no-watch</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Les r&#xe9;sultats de couverture sont affich&#xe9;s dans le terminal (r&#xe9;sum&#xe9; textuel),
+et un rapport HTML est g&#xe9;n&#xe9;r&#xe9; dans le dossier <code>coverage/</code>.
+Ouvrez <code>coverage/ponyracer/index.html</code> dans votre navigateur pour explorer le rapport d&#xe9;taill&#xe9;.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tests_de_bout_en_bout_e2e">Tests de bout en bout (e2e)</h3>
+<div class="paragraph">
+<p>Ensuite, regardons si les tests end-to-end sont OK.
+Copiez <code>home.e2e-spec.ts</code> dans le r&#xe9;pertoire <code>e2e</code>,
+et supprimez le test par d&#xe9;faut <code>example.spec.ts</code>.
+Playwright a son propre fichier de configuration,
+remplacez le fichier <code>playwright.config.ts</code>  &#xe0; la racine du projet par celui fourni.
+Ajouter &#xe9;galement le fichier <code>tsconfig.json</code> dans le r&#xe9;pertoire <code>e2e</code> fourni dans les ressources.</p>
+</div>
+<div class="paragraph">
+<p>Ensuite, lancez les tests avec&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng e2e</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Sur certains syst&#xe8;mes, vous devrez peut-&#xea;tre ex&#xe9;cuter <code>npx playwright install-deps</code> pour installer les d&#xe9;pendances syst&#xe8;me manquantes.
+Vous devriez avoir un message d&#x2019;erreur explicite si c&#x2019;est le cas.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Si vous voulez avoir une interface graphique pour voir les tests s&#x2019;ex&#xe9;cuter,
+vous pouvez lancer les tests avec&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng e2e <span class="token parameter variable">--ui</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_lint">Lint</h3>
+<div class="paragraph">
+<p>Derni&#xe8;re &#xe9;tape, v&#xe9;rifions la qualit&#xe9; de notre code.
+Les packages n&#xe9;cessaires sont d&#xe9;j&#xe0; install&#xe9;s, il ne manque plus qu&#x2019;&#xe0; configurer l&#x2019;outil.
+Pour cela, remplacez le fichier <code>eslint.config.js</code> &#xe0; la racine du projet
+par le fichier <code>eslint.config.mjs</code> fourni (notez l&#x2019;extension <code>.mjs</code>)
+et v&#xe9;rifiez la qualit&#xe9; du code avec&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng lint</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Corrigez toutes les erreurs (s&#x2019;il y en a) pour atteindre 100%.</p>
+</div>
+<div class="paragraph">
+<p>Notez que vous pouvez lancer&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash">ng lint <span class="token parameter variable">--fix</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&#xe0; n&#x2019;importe quel moment pour automatiquement formatter votre code,
+et vous d&#xe9;barrasser d&#x2019;erreurs ennuyeuses comme des espaces ou points-virgules manquants.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_envoi_des_r&#xe9;sultats">Envoi des r&#xe9;sultats</h3>
+<div class="paragraph">
+<p>Tout est bon&#xa0;?
+OK, soumettons notre r&#xe9;sultat alors&#xa0;!</p>
+</div>
+<div class="paragraph">
+<p>Pour lancer l&#x2019;analyse du code et la soumission de votre r&#xe9;sultat au site, entrez&#xa0;:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight highlight-prismjs prismjs language-bash"><code class="language-bash" data-lang="bash"><span class="token function">npm</span> run ng2ninja</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vous devrez entrer votre email et mot de passe pour pouvoir soumettre votre r&#xe9;sultat.</p>
+</div>
+<div class="paragraph">
+<p>Si vous avez suivi les consignes, vous devriez obtenir votre premier 100%
+et pouvoir passer &#xe0; l&#x2019;&#xe9;tape suivante&#xa0;!</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2026-06-18 16:05:09 UTC
+</div>
+</div>
+
