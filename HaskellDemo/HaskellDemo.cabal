@@ -1,0 +1,55 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.39.6.
+--
+-- see: https://github.com/sol/hpack
+
+name:           HaskellDemo
+version:        0.1.0.0
+description:    Демонстрационное консольное приложение на Haskell, иллюстрирующее функции, операторы, полиморфизм и классы типов.
+homepage:       https://github.com/username/HaskellDemo#readme
+bug-reports:    https://github.com/username/HaskellDemo/issues
+author:         Your Name
+maintainer:     your@email.com
+copyright:      2026
+license:        BSD3
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/username/HaskellDemo
+
+library
+  other-modules:
+      Paths_HaskellDemo
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
+
+executable HaskellDemo
+  main-is: Main.hs
+  other-modules:
+      Paths_HaskellDemo
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      HaskellDemo
+    , base >=4.7 && <5
+  default-language: Haskell2010
+
+test-suite HaskellDemo-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_HaskellDemo
+  hs-source-dirs:
+      test
+  build-depends:
+      HaskellDemo
+    , base >=4.7 && <5
+  default-language: Haskell2010
