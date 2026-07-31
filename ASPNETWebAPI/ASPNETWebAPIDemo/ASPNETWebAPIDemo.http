@@ -1,0 +1,6 @@
+@ASPNETWebAPIDemo_HostAddress = http://localhost:5090
+
+GET {{ASPNETWebAPIDemo_HostAddress}}/hello/
+Accept: application/json
+
+###
