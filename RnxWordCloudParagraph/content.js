@@ -1,155 +1,236 @@
-// Списки стоп-слов для русского и английского языков
-// (водность: местоимения, предлоги, союзы, частицы, междометия)
-const STOP_WORDS = new Set([
-  // Русские
-  'и', 'в', 'не', 'на', 'я', 'что', 'с', 'он', 'а', 'как', 'это', 'то',
-  'все', 'она', 'так', 'но', 'по', 'ты', 'мы', 'вы', 'они', 'к', 'у',
-  'из', 'от', 'до', 'о', 'об', 'за', 'над', 'под', 'при', 'про', 'без',
-  'для', 'ради', 'через', 'между', 'перед', 'вокруг', 'после', 'против',
-  'кроме', 'среди', 'вдоль', 'мимо', 'около', 'благодаря', 'вследствие',
-  'ввиду', 'вопреки', 'со', 'во', 'ко', 'обо', 'подо', 'надо', 'предо',
-  'меня', 'тебя', 'его', 'её', 'нас', 'вас', 'их', 'мне', 'тебе', 'ему',
-  'ей', 'нам', 'вам', 'им', 'мной', 'тобой', 'им', 'ею', 'нами', 'вами',
-  'ими', 'мой', 'твой', 'свой', 'наш', 'ваш', 'этот', 'тот', 'такой',
-  'весь', 'всякий', 'каждый', 'сам', 'самый', 'кто', 'что', 'какой',
-  'чей', 'сколько', 'который', 'или', 'либо', 'то', 'ни', 'тоже', 'также',
-  'зато', 'однако', 'потому', 'что', 'чтобы', 'если', 'раз', 'хотя', 'пока',
-  'лишь', 'только', 'будто', 'словно', 'точно', 'чем', 'нежели', 'ли', 'же',
-  'бы', 'ведь', 'вот', 'вон', 'даже', 'именно', 'почти', 'приблизительно',
-  'как', 'раз', 'ах', 'ох', 'эх', 'ух', 'ай', 'ой', 'эй', 'фу', 'фи', 'увы',
-  'ага', 'ого', 'ура', 'ба', 'ну', 'брр', 'тьфу', 'бы', 'же', 'да', 'нет',
-  // Английские
-  'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your',
-  'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she',
-  'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their',
-  'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that',
-  'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
-  'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an',
-  'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of',
-  'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through',
-  'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down',
-  'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once',
-  'here', 'there', 'when', 'where', 'why', 'how', 'all', 'both', 'each', 'few',
-  'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own',
-  'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don',
-  'should', 'now', 'don\'t', 'doesn\'t', 'isn\'t', 'aren\'t', 'wasn\'t',
-  'weren\'t', 'haven\'t', 'hasn\'t', 'hadn\'t', 'won\'t', 'wouldn\'t',
-  'shouldn\'t', 'can\'t', 'couldn\'t', 'mightn\'t', 'mustn\'t', 'it\'s',
-  'that\'s', 'there\'s', 'here\'s', 'what\'s', 'who\'s', 'let\'s'
+// === Стоп-слова и водные конструкции ===
+const STOP_WORDS_RU = new Set([
+  // местоимения
+  'я', 'мы', 'ты', 'вы', 'он', 'она', 'оно', 'они', 'себя',
+  'мой', 'твой', 'свой', 'его', 'её', 'их',
+  'кто', 'что', 'какой', 'который', 'чей',
+  // междометия и вводные
+  'ах', 'ох', 'увы', 'ага', 'ого', 'эй', 'ну', 'вот',
+  'конечно', 'вероятно', 'кажется', 'по-моему', 'итак',
+  'кстати', 'впрочем', 'однако', 'значит', 'пожалуй',
+  // предлоги, союзы, частицы
+  'в', 'на', 'с', 'по', 'к', 'от', 'из', 'до', 'для', 'без',
+  'и', 'а', 'но', 'или', 'что', 'чтобы', 'как', 'если',
+  'не', 'ни', 'бы', 'же', 'ли', 'то', 'это',
+  // водные из Главреда
+  'следует', 'необходимо', 'важно', 'данный', 'данная',
+  'является', 'осуществлять', 'производить', 'обеспечивать'
 ]);
 
-// Всплывающий элемент (один на страницу)
-let popup = null;
+const STOP_WORDS_EN = new Set([
+  'i', 'me', 'my', 'we', 'us', 'our', 'you', 'your',
+  'he', 'she', 'it', 'they', 'them', 'their',
+  'a', 'an', 'the', 'and', 'or', 'but', 'not', 'no',
+  'is', 'are', 'was', 'were', 'be', 'been', 'being',
+  'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
+  'can', 'could', 'should', 'may', 'might', 'must',
+  'this', 'that', 'these', 'those',
+  'in', 'on', 'at', 'by', 'for', 'with', 'about', 'to', 'from',
+  'actually', 'basically', 'literally', 'really', 'just', 'very',
+  'quite', 'rather', 'somehow', 'anyway'
+]);
 
-// Предварительный подсчёт частот всех слов на странице при загрузке
-const wordFreq = new Map();
-let maxFreq = 0;
+// === Вспомогательные функции ===
+function detectLanguage(text) {
+  // если есть кириллические символы, считаем русским
+  return /[а-яё]/i.test(text) ? 'ru' : 'en';
+}
 
+// Токенизация с поддержкой Unicode и апострофов
 function tokenize(text) {
-  // Разбиваем на слова с учётом русского и английского, включая апострофы
-  return text.toLowerCase().match(/[a-zа-яё'’-]+/g) || [];
+  return text.match(/[\w'’-]+/gu) || [];
 }
 
-function buildFrequencyMap() {
-  const pageText = document.body.innerText || '';
-  const tokens = tokenize(pageText);
-  for (const token of tokens) {
-    if (!STOP_WORDS.has(token)) {
-      const count = (wordFreq.get(token) || 0) + 1;
-      wordFreq.set(token, count);
-      if (count > maxFreq) maxFreq = count;
+// Удаление стоп-слов и подсчёт частот значимых слов
+function getWordFrequencies(tokens, lang) {
+  const stopSet = lang === 'ru' ? STOP_WORDS_RU : STOP_WORDS_EN;
+  const freq = new Map();
+  for (let token of tokens) {
+    const lower = token.toLowerCase();
+    if (!stopSet.has(lower)) {
+      freq.set(lower, (freq.get(lower) || 0) + 1);
+    }
+  }
+  return freq;
+}
+
+// === Определение подлежащего и сказуемого ===
+// --- Английский (Compromise) ---
+function analyzeEnglish(text) {
+  // результат: массив объектов {word, isSubject, isPredicate}
+  if (typeof nlp === 'undefined') {
+    console.warn('Compromise not loaded. English subjects/predicates will be skipped.');
+    return [];
+  }
+  const doc = nlp(text);
+  const sentences = doc.sentences().json();
+  const results = [];
+
+  sentences.forEach(sent => {
+    const words = tokenize(sent.text);
+    // Находим подлежащее (Subject) и глагол (Verb) в предложении
+    const subjs = doc.match('#Subject').out('array');
+    const verbs = doc.verbs().out('array');
+    // Простейшее сопоставление: ищем первое слово из subjs/verbs в tokens
+    words.forEach(w => {
+      const isSubj = subjs.some(s => s.toLowerCase() === w.toLowerCase());
+      const isVerb = verbs.some(v => v.toLowerCase() === w.toLowerCase());
+      results.push({ word: w, isSubject: isSubj, isPredicate: isVerb });
+    });
+  });
+  return results;
+}
+
+// --- Русский (Az) ---
+let azMorph = null;
+async function initAz() {
+  if (typeof Az !== 'undefined' && !azMorph) {
+    azMorph = new Az.Morph();
+    // Az требует загрузки словаря; предполагаем, что словарь уже загружен в Az.dict
+    if (Az.dict) {
+      await azMorph.init(Az.dict);
+      console.log('Az morphology initialized');
     }
   }
 }
 
-// Создаём единый popup‑контейнер
-function createPopup() {
-  popup = document.createElement('div');
-  popup.id = 'word-freq-popup';
-  popup.style.cssText = `
-    position: fixed;
-    display: none;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    padding: 12px 16px;
-    max-width: 600px;
-    max-height: 400px;
-    overflow-y: auto;
-    z-index: 2147483647;
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    pointer-events: auto;
-  `;
-  document.body.appendChild(popup);
+function analyzeRussian(text) {
+  if (!azMorph) return []; // нет анализа
+  // разбиваем на предложения (упрощённо)
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  const results = [];
+  sentences.forEach(sent => {
+    const tokens = tokenize(sent);
+    const parsed = tokens.map(word => azMorph.parse(word).shift());
+    // ищем первое существительное/местоимение в им.падеже как подлежащее
+    const subjIdx = parsed.findIndex(p => p && (p.tag.POS === 'NOUN' || p.tag.POS === 'PRON') && p.tag.Case === 'Nom');
+    // первое глагольное сказуемое (глагол в личной форме или краткое прилагательное)
+    const predIdx = parsed.findIndex(p => p && (p.tag.POS === 'VERB' || p.tag.POS === 'ADJS') && p.tag.VerbForm === 'Fin');
+    tokens.forEach((w, i) => {
+      results.push({
+        word: w,
+        isSubject: i === subjIdx,
+        isPredicate: i === predIdx
+      });
+    });
+  });
+  return results;
 }
 
-// Генерируем содержимое попапа для конкретного абзаца
-function renderParagraph(paragraphElement) {
-  const rawText = paragraphElement.innerText || paragraphElement.textContent || '';
-  // Разбиваем с сохранением пробелов и знаков препинания
-  const segments = rawText.match(/\S+\s*/g) || [rawText];
+// === Сборка тултипа ===
+async function buildTooltipContent(paragraphText) {
+  const lang = detectLanguage(paragraphText);
+  const tokens = tokenize(paragraphText);
+  const freqMap = getWordFrequencies(tokens, lang);
+  const maxFreq = Math.max(1, ...freqMap.values());
+
+  // получаем разметку подлежащего/сказуемого
+  let highlights = [];
+  if (lang === 'en') {
+    highlights = analyzeEnglish(paragraphText);
+  } else {
+    await initAz();
+    highlights = analyzeRussian(paragraphText);
+  }
+
+  // создаём HTML-строку
+  const words = paragraphText.match(/[\w'’-]+|[^\w'’-]+/gu) || [];
   let html = '';
-  for (const seg of segments) {
-    // Извлекаем «чистое» слово без окружающей пунктуации
-    const cleanMatch = seg.match(/[a-zа-яё'’-]+/i);
-    if (!cleanMatch) {
-      html += seg; // оставляем как есть (например, знаки препинания)
-      continue;
+  words.forEach(segment => {
+    if (/[\w'’-]+/u.test(segment)) {
+      const lower = segment.toLowerCase();
+      const freq = freqMap.get(lower) || 0;
+      const scale = freq / maxFreq;           // 0 .. 1
+      const fontSize = 14 + Math.round(12 * scale); // 14..26px
+      const fontWeight = 400 + Math.round(400 * scale); // 400..800
+
+      // ищем в highlights
+      let classes = 'tooltip-word';
+      let underlineClass = '';
+      if (highlights.length) {
+        const h = highlights.find(item => item.word === segment);
+        if (h) {
+          if (h.isSubject) underlineClass = 'subject';
+          if (h.isPredicate) underlineClass = 'predicate';
+          classes += ' ' + underlineClass;
+        }
+      }
+      html += `<span class="${classes}" style="font-size:${fontSize}px; font-weight:${fontWeight};">${segment}</span>`;
+    } else {
+      // знаки препинания, пробелы
+      html += segment.replace(/ /g, '&nbsp;');
     }
-    const cleanWord = cleanMatch[0].toLowerCase();
-    // Определяем стиль слова
-    let fontSize = 14;   // базовый размер для стоп-слов
-    let fontWeight = 400;
-    if (!STOP_WORDS.has(cleanWord) && wordFreq.has(cleanWord)) {
-      const freq = wordFreq.get(cleanWord);
-      const ratio = maxFreq > 0 ? freq / maxFreq : 0;
-      fontSize = 14 + Math.round(28 * ratio);  // диапазон 14–42px
-      fontWeight = 400 + Math.round(300 * ratio); // 400–700
-    }
-    // Заменяем только слово, сохраняя остальные символы
-    const styledToken = seg.replace(cleanMatch[0], `<span style="font-size:${fontSize}px;font-weight:${fontWeight};">${cleanMatch[0]}</span>`);
-    html += styledToken;
-  }
-  popup.innerHTML = html;
+  });
+  return html;
 }
 
-// Обработчики мыши
-function onMouseEnter(e) {
+// === Управление тултипом ===
+let tooltipEl = null;
+
+function createTooltipElement() {
+  const div = document.createElement('div');
+  div.id = 'paragraph-tooltip';
+  div.style.display = 'none';
+  document.body.appendChild(div);
+  return div;
+}
+
+function showTooltip(html, x, y) {
+  if (!tooltipEl) tooltipEl = createTooltipElement();
+  tooltipEl.innerHTML = html;
+  tooltipEl.style.display = 'block';
+  tooltipEl.style.left = (x + 15) + 'px';
+  tooltipEl.style.top = (y + 15) + 'px';
+  // коррекция, чтобы не выходил за границы окна
+  const rect = tooltipEl.getBoundingClientRect();
+  if (rect.right > window.innerWidth) {
+    tooltipEl.style.left = (x - rect.width - 15) + 'px';
+  }
+  if (rect.bottom > window.innerHeight) {
+    tooltipEl.style.top = (y - rect.height - 15) + 'px';
+  }
+}
+
+function hideTooltip() {
+  if (tooltipEl) {
+    tooltipEl.style.display = 'none';
+  }
+}
+
+// === Обработчики событий ===
+document.addEventListener('mouseover', async (e) => {
   const p = e.target.closest('p');
   if (!p) return;
-  renderParagraph(p);
-  positionPopup(e);
-  popup.style.display = 'block';
-}
 
-function onMouseLeave(e) {
-  const p = e.target.closest('p');
-  if (!p) return;
-  // Проверяем, что мышь действительно покинула абзац, а не перешла на потомка
-  if (!p.contains(e.relatedTarget)) {
-    popup.style.display = 'none';
+  const text = p.textContent.trim();
+  if (text.length === 0) return;
+
+  try {
+    const html = await buildTooltipContent(text);
+    showTooltip(html, e.clientX, e.clientY);
+  } catch (err) {
+    console.error('Tooltip error:', err);
   }
-}
+}, true);
 
-function positionPopup(e) {
-  const x = e.clientX + 15;
-  const y = e.clientY + 15;
-  popup.style.left = Math.min(x, window.innerWidth - 620) + 'px';
-  popup.style.top = Math.min(y, window.innerHeight - 420) + 'px';
-}
+document.addEventListener('mousemove', (e) => {
+  if (!tooltipEl || tooltipEl.style.display === 'none') return;
+  // двигаем тултип за курсором только если он внутри параграфа
+  const p = e.target.closest('p');
+  if (p) {
+    tooltipEl.style.left = (e.clientX + 15) + 'px';
+    tooltipEl.style.top = (e.clientY + 15) + 'px';
+  }
+});
 
-// Инициализация
-function init() {
-  buildFrequencyMap();
-  createPopup();
-  document.addEventListener('mouseover', onMouseEnter, true);
-  document.addEventListener('mouseout', onMouseLeave, true);
-}
+document.addEventListener('mouseout', (e) => {
+  const p = e.target.closest('p');
+  if (p && !p.contains(e.relatedTarget)) {
+    hideTooltip();
+  }
+});
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+// очистка при уходе со страницы
+window.addEventListener('beforeunload', () => {
+  if (tooltipEl) tooltipEl.remove();
+});

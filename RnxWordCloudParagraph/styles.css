@@ -1,0 +1,30 @@
+#paragraph-tooltip {
+  position: fixed;
+  z-index: 2147483647;
+  max-width: 500px;
+  background: #fffef0;
+  border: 2px solid #b0a080;
+  border-radius: 8px;
+  padding: 10px 15px;
+  box-shadow: 3px 3px 12px rgba(0,0,0,0.3);
+  font-family: 'Georgia', 'Times New Roman', serif;
+  line-height: 1.6;
+  font-size: 16px;
+  pointer-events: none;  /* чтобы тултип не перехватывал события мыши */
+  transition: opacity 0.15s;
+}
+
+.tooltip-word {
+  display: inline;
+  transition: font-size 0.2s, font-weight 0.2s;
+}
+
+.subject {
+  border-bottom: 2px solid #000;
+  padding-bottom: 1px;
+}
+
+.predicate {
+  border-bottom: 4px double #000;
+  padding-bottom: 1px;
+}

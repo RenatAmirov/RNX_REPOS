@@ -1,14 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "Word Frequency Paragraph Popup",
+  "name": "Paragraph Analyzer with Emphasis",
   "version": "1.0",
-  "description": "Показывает облако слов абзаца с размером по частоте на странице",
+  "description": "Shows a tooltip with text where word size/weight depends on frequency, subjects and predicates are underlined.",
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_idle"
+      "js": ["lib/compromise.min.js", "lib/az.min.js", "content.js"],
+      "css": ["styles.css"]
     }
   ],
-  "icons": { "48": "icon.png" }
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["lib/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
