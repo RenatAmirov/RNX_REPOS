@@ -1,26 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Paragraph Analyzer with Emphasis",
+  "name": "Word Frequency Tooltip",
   "version": "1.0",
-  "description": "Shows a tooltip with text where word size/weight depends on frequency, subjects and predicates are underlined.",
-  "permissions": ["scripting", "activeTab"],
+  "description": "При наведении на параграф показывает текст с размером слов по частоте (как анализ водности на istio.com).",
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["lib/compromise.min.js", "lib/az.min.js", "content.js"],
-      "css": ["styles.css"]
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
   ],
-  "icons": {
-    "16": "icon.png",
-    "48": "icon.png",
-    "128": "icon.png"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["lib/*"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  "icons": { "48": "icon.png" }
 }
