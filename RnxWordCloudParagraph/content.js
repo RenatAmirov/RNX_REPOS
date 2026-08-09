@@ -1,310 +1,313 @@
-// ========== 1. Стеммеры ==========
+(function () {
+  'use strict';
 
-// Русский стеммер (упрощённый Snowball)
-function stemRussian(word) {
-  word = word.toLowerCase().replace(/ё/g, 'е');
-  if (word.length < 3) return word;
-
-  // RV-область: после первой гласной
-  const vowel = /[аеиоуыэюя]/;
-  let rvStart = word.search(vowel);
-  if (rvStart < 0) return word;
-  rvStart++;
-
-  // Удаление окончаний
-  const perfectiveGerund = /(в|вши|вшись|(ив|ыв|ав|яв)(ши|сь))$/;
-  const adjective = /(ее|ие|ые|ое|ими|ыми|ей|ий|ый|ой|ем|им|ым|ом|его|ого|ему|ому|их|ых|ую|юю|ая|яя|ою|ею)$/;
-  const participle = /(ем|нн|вш|ющ|щ|ивш|ывш|увш|авш|явш)$/;
-  const reflexive = /(ся|сь)$/;
-  const verb = /(ила|ыла|ена|ейте|уйте|ите|или|ыли|ей|уй|ил|ыл|им|ым|ен|ило|ыло|ено|ят|ует|уют|ит|ыт|ены|ить|ыть|ишь|ую|ю)$/;
-  const noun = /(а|ев|ов|ие|ье|е|иями|ями|ами|еи|ии|и|ией|ей|ой|ий|й|иям|ям|ием|ем|ам|ом|о|у|ах|иях|ях|ы|ь|ию|ью|ю|ия|ья|я)$/;
-  const superlative = /(ейш|ейше)$/;
-  const derivational = /(ость|ост)$/;
-
-  // Шаг 1: удалить 'ся'/'сь'
-  word = word.replace(reflexive, '');
-
-  // Попытаться отсечь по порядку
-  if (word.replace(perfectiveGerund, '').length >= rvStart) {
-    word = word.replace(perfectiveGerund, '');
-  } else {
-    word = word.replace(reflexive, ''); // на случай уже удалённого
-    if (word.replace(adjective, '').length >= rvStart) {
-      word = word.replace(adjective, '');
-      word = word.replace(participle, '');
-    } else if (word.replace(verb, '').length >= rvStart) {
-      word = word.replace(verb, '');
-    } else if (word.replace(noun, '').length >= rvStart) {
-      word = word.replace(noun, '');
-    }
-  }
-
-  // Шаг 2: удалить 'и' в конце основы
-  word = word.replace(/и$/, '');
-
-  // Шаг 3: удалить производный суффикс 'ость'/'ост'
-  if (word.replace(derivational, '').length >= rvStart) {
-    word = word.replace(derivational, '');
-  }
-
-  // Шаг 4: удалить 'ь'
-  word = word.replace(/ь$/, '');
-
-  return word;
-}
-
-// Английский стеммер (Porter)
-function stemEnglish(word) {
-  word = word.toLowerCase();
-  if (word.length < 3) return word;
-
-  // Step 1a
-  word = word.replace(/(ss|i)es$/, '$1');
-  word = word.replace(/([^s])s$/, '$1');
-
-  // Step 1b
-  if (word.match(/(eed)$/)) {
-    if (word.slice(0, -3).match(/[aeiou]/)) word = word.slice(0, -1);
-  } else if (word.match(/(ed|ing)$/)) {
-    let stem = word.replace(/(ed|ing)$/, '');
-    if (stem.match(/[aeiou]/)) {
-      word = stem;
-      if (word.match(/(at|bl|iz)$/)) word += 'e';
-      else if (word.match(/([^aeiouylsz])\1$/)) word = word.slice(0, -1);
-      else if (word.match(/^[^aeiou]+[aeiou][^aeiouwxy]$/)) word += 'e';
-    }
-  }
-
-  // Step 1c
-  if (word.match(/y$/) && word.slice(0, -1).match(/[aeiou]/)) word = word.slice(0, -1) + 'i';
-
-  // Step 2
-  const step2Map = {
-    tional: 'tion', enci: 'ence', anci: 'ance', izer: 'ize', abli: 'able',
-    alli: 'al', entli: 'ent', eli: 'e', ousli: 'ous', ization: 'ize',
-    ation: 'ate', ator: 'ate', alism: 'al', iveness: 'ive', fulness: 'ful',
-    ousness: 'ous', aliti: 'al', iviti: 'ive', biliti: 'ble',
-  };
-  for (let [suf, rep] of Object.entries(step2Map)) {
-    if (word.endsWith(suf) && word.slice(0, -suf.length).match(/[aeiou]/)) {
-      word = word.slice(0, -suf.length) + rep;
-      break;
-    }
-  }
-
-  // Step 3
-  const step3Map = {
-    icate: 'ic', ative: '', alize: 'al', iciti: 'ic', ical: 'ic',
-    ful: '', ness: '',
-  };
-  for (let [suf, rep] of Object.entries(step3Map)) {
-    if (word.endsWith(suf) && word.slice(0, -suf.length).match(/[aeiou]/)) {
-      word = word.slice(0, -suf.length) + rep;
-      break;
-    }
-  }
-
-  // Step 4
-  const step4Suffixes = ['al', 'ance', 'ence', 'er', 'ic', 'able', 'ible', 'ant', 'ement', 'ment', 'ent', 'ou', 'ism', 'ate', 'iti', 'ous', 'ive', 'ize'];
-  for (let suf of step4Suffixes) {
-    if (word.endsWith(suf) && word.slice(0, -suf.length).match(/[aeiou]./)) {
-      word = word.slice(0, -suf.length);
-      break;
-    }
-  }
-
-  // Step 5a
-  if (word.endsWith('e')) {
-    let stem = word.slice(0, -1);
-    if (stem.match(/[aeiou]./) || (stem.match(/[aeiou]/) && !stem.match(/[^aeiou][aeiou][^aeiouwxy]$/))) {
-      word = stem;
-    }
-  }
-  if (word.endsWith('ll') && word.slice(0, -2).match(/[aeiou]./)) word = word.slice(0, -1);
-
-  return word;
-}
-
-// Универсальный стеммер (по языку)
-function stem(word, lang) {
-  return lang === 'ru' ? stemRussian(word) : stemEnglish(word);
-}
-
-// ========== 2. Стоп-слова (водность, местоимения, междометия) ==========
-const RU_STOP = new Set([
-  'и', 'в', 'во', 'не', 'что', 'он', 'на', 'я', 'с', 'со', 'как', 'а', 'то', 'все', 'она', 'так', 'но', 'его',
-  'по', 'из', 'же', 'у', 'от', 'за', 'для', 'ты', 'мы', 'вы', 'они', 'это', 'ее', 'к', 'до', 'о', 'об',
-  'или', 'бы', 'еще', 'уж', 'уже', 'ли', 'только', 'вот', 'там', 'тут', 'где', 'куда', 'откуда', 'когда',
-  'почему', 'зачем', 'ну', 'ка', 'ой', 'ах', 'ох', 'эх', 'увы', 'фу', 'ба', 'гм', 'ага', 'ого', 'вау',
-  'себя', 'себе', 'собой', 'меня', 'мне', 'мной', 'тебя', 'тебе', 'тобой', 'его', 'ему', 'им', 'нее', 'ней',
-  'нами', 'вами', 'ими', 'мой', 'твой', 'свой', 'наш', 'ваш', 'их', 'этот', 'тот', 'такой', 'весь', 'сам',
-  'каждый', 'кто', 'чей', 'сколько', 'да', 'нет', 'ни', 'будто', 'словно', 'точно'
-]);
-
-const EN_STOP = new Set([
-  'i', 'me', 'my', 'mine', 'myself', 'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his',
-  'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'we', 'us', 'our', 'ours', 'ourselves',
-  'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'whose', 'that', 'this',
-  'these', 'those', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at',
-  'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above',
-  'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then',
-  'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'both', 'each', 'few', 'more', 'most', 'other',
-  'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can',
-  'will', 'just', 'don', 'should', 'now', 'oh', 'ah', 'hey', 'wow', 'oops', 'ouch', 'hmm', 'er', 'um', 'uh',
-  'alas'
-]);
-
-function isStop(lower, lang) {
-  return lang === 'ru' ? RU_STOP.has(lower) : EN_STOP.has(lower);
-}
-
-function detectLang(word) {
-  // Если содержит кириллицу – русский, иначе английский
-  return /[а-яё]/i.test(word) ? 'ru' : 'en';
-}
-
-// ========== 3. Построение HTML с весами ==========
-function buildWeightedHTML(text) {
-  const wordRegex = /[\p{L}\u0027\u002D]+/gu;
-  const tokens = [];
-  let match;
-  // Собираем все слова для подсчёта частот
-  while ((match = wordRegex.exec(text)) !== null) {
-    const original = match[0];
-    const lower = original.toLowerCase();
-    const lang = detectLang(lower);
-    if (!isStop(lower, lang)) {
-      tokens.push({ original, lower, lang });
+  // ========== СТЕММЕРЫ ==========
+  // Стеммер Портера для русского языка (упрощённая реализация snowball)
+  function russianStemmer(word) {
+    word = word.toLowerCase();
+    if (word.length < 3) return word;
+    const vowels = 'аеиоуыэюя';
+    const perfectiveGround = /.*(ив|ивши|ившись|ыв|ывши|ывшись)$/;
+    const reflexive = /(ся|сь)$/;
+    const adjective = /(ее|ие|ые|ое|ими|ыми|ей|ий|ый|ой|ем|им|ым|ом|его|ого|ему|ому|их|ых|ую|юю|ая|яя|ою|ею)$/;
+    const participle = /(ивш|ывш|ующ)$/;
+    const verb = /(ила|ыла|ена|ейте|уйте|ите|или|ыли|ей|уй|ил|ыл|им|ым|ен|ило|ыло|ено|ят|ует|уют|ит|ыт|ены|ить|ыть|ишь|ую|ю)$/;
+    const noun = /(а|ев|ов|ие|ье|е|иями|ями|ами|еи|ии|и|ией|ей|ой|ий|й|иям|ям|ием|ем|ам|ом|о|у|ах|иях|ях|ы|ь|ию|ью|ю|ия|ья|я)$/;
+    const superlative = /(ейше|ейш)$/;
+    const derivational = /(ост|ость)$/;
+    let stem = word;
+    // Шаг 1: удаление окончаний совершенного вида
+    stem = stem.replace(perfectiveGround, '');
+    // Рефлексивность
+    stem = stem.replace(reflexive, '');
+    // Прилагательные
+    if (adjective.test(stem)) {
+      stem = stem.replace(adjective, '');
+      stem = stem.replace(participle, '');
     } else {
-      tokens.push({ original, lower, lang, stop: true });
+      // Причастия
+      stem = stem.replace(participle, '');
+      // Глаголы
+      if (verb.test(stem)) {
+        stem = stem.replace(verb, '');
+      } else {
+        // Существительные
+        stem = stem.replace(noun, '');
+      }
     }
+    // Шаг 2: удаление суффикса "и"
+    stem = stem.replace(/и$/, '');
+    // Шаг 3: удаление превосходной степени
+    stem = stem.replace(superlative, '');
+    // Шаг 4: удаление деривационных суффиксов
+    stem = stem.replace(derivational, '');
+    // Удаление мягкого знака
+    stem = stem.replace(/ь$/, '');
+    // Если основа слишком короткая, возвращаем исходное слово
+    return stem.length > 2 ? stem : word;
   }
 
-  // Подсчёт частот значимых слов
-  const freqMap = new Map();
-  for (const t of tokens) {
-    if (t.stop) continue;
-    const root = stem(t.lower, t.lang);
-    freqMap.set(root, (freqMap.get(root) || 0) + 1);
-  }
-
-  // Найти диапазон частот
-  let minFreq = Infinity, maxFreq = -Infinity;
-  for (let count of freqMap.values()) {
-    if (count < minFreq) minFreq = count;
-    if (count > maxFreq) maxFreq = count;
-  }
-  if (minFreq === Infinity) minFreq = 0; // нет значимых слов
-
-  const baseSize = 14;
-  const maxSize = 32;
-  const range = maxFreq - minFreq || 1;
-
-  // Перестройка текста с обёрткой слов в <span>
-  let result = '';
-  let lastIdx = 0;
-  const allMatches = [...text.matchAll(wordRegex)];
-  for (const m of allMatches) {
-    // Добавляем текст между словами
-    result += escapeHTML(text.slice(lastIdx, m.index));
-    const original = m[0];
-    const lower = original.toLowerCase();
-    const lang = detectLang(lower);
-    let fontSize = baseSize;
-    let fontWeight = 'normal';
-    if (!isStop(lower, lang)) {
-      const root = stem(lower, lang);
-      const freq = freqMap.get(root) || 0;
-      const ratio = (freq - minFreq) / range;
-      fontSize = baseSize + (maxSize - baseSize) * ratio;
-      fontWeight = ratio > 0.6 ? 'bold' : (ratio > 0.3 ? '600' : 'normal');
+  // Стеммер Портера для английского языка
+  function englishStemmer(word) {
+    word = word.toLowerCase();
+    if (word.length < 3) return word;
+    // Шаг 1a
+    word = word.replace(/sses$/, 'ss').replace(/ies$/, 'i').replace(/ss$/, 'ss').replace(/s$/, '');
+    // Шаг 1b
+    let flag = false;
+    if (/(eed|eedly)$/.test(word)) {
+      const stem = word.replace(/(eed|eedly)$/, '');
+      if (stem.length > 1) {
+        word = stem + 'ee';
+      }
+    } else if (/(ed|edly|ing|ingly)$/.test(word)) {
+      const stem = word.replace(/(ed|edly|ing|ingly)$/, '');
+      if (stem.length > 1) {
+        word = stem;
+        flag = true;
+      }
     }
-    result += `<span style="font-size:${fontSize}px;font-weight:${fontWeight}">${escapeHTML(original)}</span>`;
-    lastIdx = m.index + original.length;
+    if (flag) {
+      if (/(at|bl|iz)$/.test(word)) {
+        word += 'e';
+      } else if (/(bb|dd|ff|gg|mm|nn|pp|rr|tt)$/.test(word)) {
+        word = word.slice(0, -1);
+      } else if (/[^aeiouylsz][aeiou][^aeiouwxy]$/.test(word) && word.length > 2) {
+        word += 'e';
+      }
+    }
+    // Шаг 1c
+    word = word.replace(/y$/, 'i');
+    // Остальные шаги (2-5) для простоты опущены, это даёт приемлемый результат
+    return word;
   }
-  result += escapeHTML(text.slice(lastIdx));
-  return result;
-}
 
-function escapeHTML(str) {
-  const div = document.createElement('div');
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
-}
+  // Определение языка: если больше кириллических букв, русский, иначе английский
+  function detectLanguage(text) {
+    const cyrillicCount = (text.match(/[а-яё]/gi) || []).length;
+    const latinCount = (text.match(/[a-z]/gi) || []).length;
+    return cyrillicCount >= latinCount ? 'ru' : 'en';
+  }
 
-// ========== 4. Всплывающее окно и обработчики ==========
-const popup = document.createElement('div');
-popup.id = 'word-freq-popup';
-popup.style.cssText = `
-  position: fixed; background: #fff; border: 1px solid #aaa;
-  box-shadow: 2px 2px 8px rgba(0,0,0,0.2); border-radius: 6px;
-  padding: 12px 16px; max-width: 600px; max-height: 400px; overflow-y: auto;
-  z-index: 999999; pointer-events: auto; line-height: 1.5; font-family: sans-serif;
-  display: none;
-`;
-document.body.appendChild(popup);
+  // ========== СТОП-СЛОВА (местоимения, междометия, предлоги, союзы, водные) ==========
+  const stopWordsRU = new Set([
+    'и', 'в', 'во', 'не', 'что', 'он', 'на', 'я', 'с', 'со', 'как', 'а', 'то', 'все', 'она', 'так', 'но',
+    'да', 'ты', 'к', 'у', 'же', 'вы', 'за', 'бы', 'по', 'только', 'ее', 'мне', 'было', 'вот', 'от', 'меня',
+    'еще', 'нет', 'о', 'из', 'ему', 'теперь', 'когда', 'даже', 'ну', 'вдруг', 'ли', 'если', 'уже', 'или',
+    'быть', 'был', 'него', 'вас', 'вам', 'себя', 'один', 'как', 'уже', 'до', 'мой', 'это', 'чтоб', 'потому',
+    'себе', 'тобой', 'нам', 'ними', 'тем', 'чем', 'где', 'весь', 'там', 'тут', 'также', 'ни', 'каждый',
+    'этот', 'тот', 'все', 'мой', 'твой', 'свой', 'его', 'её', 'их', 'мы', 'вы', 'они', 'кто', 'кого', 'кому',
+    'кем', 'ком', 'что', 'чего', 'чему', 'чем', 'чём', 'который', 'которая', 'которые', 'этот', 'эта', 'эти',
+    'тот', 'та', 'те', 'такой', 'такая', 'такие', 'сам', 'сама', 'сами', 'весь', 'вся', 'всё', 'все',
+    'любой', 'всякий', 'другой', 'какой-то', 'некто', 'нечто', 'несколько', 'много', 'мало', 'более',
+    'менее', 'очень', 'весьма', 'почти', 'совсем', 'тоже', 'ещё', 'уже', 'просто', 'например', 'ах', 'ох',
+    'эх', 'ой', 'ай', 'увы', 'гм', 'хм', 'ну', 'ой-ой', 'ого', 'фи', 'фу', 'ба', 'ура', 'браво',
+    'здравствуйте', 'привет', 'пока', 'спасибо', 'пожалуйста', 'извините', 'будьте', 'вроде', 'типа', 'блин'
+  ]);
 
-let currentPara = null;
-let hideTimeout = null;
+  const stopWordsEN = new Set([
+    'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 'yourselves',
+    'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their',
+    'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are',
+    'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an',
+    'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about',
+    'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up',
+    'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when',
+    'where', 'why', 'how', 'all', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor',
+    'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should',
+    'now', 'll', 're', 've', 'm', 'ain', 'aren', 'couldn', 'didn', 'doesn', 'hadn', 'hasn', 'haven', 'isn',
+    'ma', 'mightn', 'mustn', 'needn', 'shan', 'shouldn', 'wasn', 'weren', 'won', 'wouldn', 'hello', 'hi', 'hey',
+    'oh', 'ah', 'wow', 'oops', 'hm', 'hmm', 'err', 'uh', 'yeah', 'yes', 'no', 'please', 'thanks', 'sorry'
+  ]);
 
-function showPopup(para, event) {
-  if (currentPara === para) return;
-  if (currentPara) hidePopup();
+  // ========== ТОКЕНИЗАЦИЯ И АНАЛИЗ ==========
+  function tokenize(text) {
+    return text.match(/[а-яёa-z0-9]+(?:-[а-яёa-z0-9]+)*/gi) || [];
+  }
 
-  // Кешируем построенный HTML на элементе
-  if (!para.dataset.weightedHtml) {
-    const text = para.innerText;
+  function analyzeText(text) {
+    const lang = detectLanguage(text);
+    const stemmer = lang === 'ru' ? russianStemmer : englishStemmer;
+    const stopSet = lang === 'ru' ? stopWordsRU : stopWordsEN;
+
+    const words = tokenize(text);
+    const totalWords = words.length;
+    let stopWordCount = 0;
+
+    const freqMap = new Map(); // корень -> count
+    const wordDetails = [];    // { original, lower, isStop, stem, freq }
+
+    for (let w of words) {
+      const lower = w.toLowerCase();
+      const isStop = stopSet.has(lower) || lower.length <= 1;
+      if (isStop) stopWordCount++;
+      const stem = isStop ? lower : stemmer(lower);
+      if (!isStop) {
+        freqMap.set(stem, (freqMap.get(stem) || 0) + 1);
+      }
+      wordDetails.push({
+        original: w,
+        lower: lower,
+        isStop: isStop,
+        stem: stem,
+        freq: 0 // будет заполнено позже
+      });
+    }
+
+    const maxFreq = freqMap.size ? Math.max(...freqMap.values()) : 0;
+
+    // Заполняем freq для нестоп-слов
+    for (let detail of wordDetails) {
+      if (!detail.isStop) {
+        detail.freq = freqMap.get(detail.stem) || 0;
+      } else {
+        detail.freq = 0;
+      }
+    }
+
+    const waterPercent = totalWords ? Math.round((stopWordCount / totalWords) * 100) : 0;
+    const topKeyWords = [...freqMap.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([stem, count]) => ({ stem, count, percent: Math.round((count / totalWords) * 100) }));
+
+    return {
+      words: wordDetails,
+      totalWords,
+      stopWordCount,
+      waterPercent,
+      maxFreq,
+      topKeyWords,
+      lang
+    };
+  }
+
+  // ========== ГЕНЕРАЦИЯ HTML ТУЛТИПА ==========
+  function generateTooltipHTML(analysis) {
+    const { words, waterPercent, maxFreq, topKeyWords } = analysis;
+    const baseFontSize = 16;
+    const maxFontSize = 36;
+    const minWeight = 400;
+    const maxWeight = 900;
+
+    let html = `<div class="tooltip-meta">Водность: ${waterPercent}% | Ключевые слова: `;
+    html += topKeyWords.map(k => `${k.stem} (${k.percent}%)`).join(', ') + '</div>';
+
+    for (let w of words) {
+      let fontSize = baseFontSize;
+      let fontWeight = minWeight;
+      if (!w.isStop && maxFreq > 0) {
+        const ratio = maxFreq > 1 ? (w.freq - 1) / (maxFreq - 1) : 0;
+        fontSize = baseFontSize + (maxFontSize - baseFontSize) * ratio;
+        fontWeight = minWeight + (maxWeight - minWeight) * ratio;
+      }
+      html += `<span class="word-span" style="font-size:${fontSize}px;font-weight:${fontWeight};">${escapeHTML(w.original)}</span> `;
+    }
+    return html;
+  }
+
+  function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  // ========== УПРАВЛЕНИЕ ТУЛТИПОМ ==========
+  const tooltip = document.createElement('div');
+  tooltip.id = 'wordcloud-tooltip';
+  document.body.appendChild(tooltip);
+
+  let currentTooltipType = null; // 'paragraph' или 'selection'
+
+  function showTooltip(html, x, y, type) {
+    tooltip.innerHTML = html;
+    tooltip.style.display = 'block';
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+    currentTooltipType = type;
+  }
+
+  function moveTooltip(x, y) {
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  function hideTooltip() {
+    tooltip.style.display = 'none';
+    tooltip.innerHTML = '';
+    currentTooltipType = null;
+  }
+
+  // Проверка выделения
+  function hasSelection() {
+    const sel = window.getSelection();
+    return sel && sel.toString().trim().length > 0;
+  }
+
+  // Обработчики
+  function onParagraphMouseOver(e) {
+    const target = e.target.closest('p');
+    if (!target || hasSelection()) return;
+    const text = target.innerText;
     if (!text.trim()) return;
-    para.dataset.weightedHtml = buildWeightedHTML(text);
+    const analysis = analyzeText(text);
+    const html = generateTooltipHTML(analysis);
+    showTooltip(html, e.clientX + 15, e.clientY + 15, 'paragraph');
   }
-  popup.innerHTML = para.dataset.weightedHtml;
-  popup.style.display = 'block';
-  positionPopup(event.clientX, event.clientY);
-  currentPara = para;
-  clearTimeout(hideTimeout);
-}
 
-function hidePopup() {
-  popup.style.display = 'none';
-  currentPara = null;
-}
-
-function positionPopup(mx, my) {
-  const gap = 15;
-  let left = mx + gap;
-  let top = my + gap;
-  const rect = popup.getBoundingClientRect();
-  if (left + rect.width > window.innerWidth) left = mx - rect.width - gap;
-  if (top + rect.height > window.innerHeight) top = my - rect.height - gap;
-  popup.style.left = Math.max(0, left) + 'px';
-  popup.style.top = Math.max(0, top) + 'px';
-}
-
-document.addEventListener('mouseover', (e) => {
-  const para = e.target.closest('p');
-  if (!para) return;
-  showPopup(para, e);
-});
-
-document.addEventListener('mouseout', (e) => {
-  const para = e.target.closest('p');
-  if (para && currentPara === para) {
-    // Небольшая задержка, чтобы можно было навести на popup
-    hideTimeout = setTimeout(() => {
-      // Если мышь не над popup, скрыть
-      if (!popup.matches(':hover')) hidePopup();
-    }, 100);
+  function onParagraphMouseMove(e) {
+    if (currentTooltipType === 'paragraph') {
+      moveTooltip(e.clientX + 15, e.clientY + 15);
+    }
   }
-});
 
-popup.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-popup.addEventListener('mouseleave', () => {
-  hideTimeout = setTimeout(hidePopup, 100);
-});
-
-// Если ушли с параграфа и не вернулись на popup – скрываем через таймаут
-document.addEventListener('mousemove', (e) => {
-  if (currentPara && !currentPara.matches(':hover') && !popup.matches(':hover')) {
-    hideTimeout = setTimeout(hidePopup, 200);
+  function onParagraphMouseOut(e) {
+    if (currentTooltipType === 'paragraph') {
+      hideTooltip();
+    }
   }
-});
+
+  function onMouseUp(e) {
+    setTimeout(() => {
+      const sel = window.getSelection();
+      if (!sel || sel.toString().trim().length === 0) {
+        if (currentTooltipType === 'selection') hideTooltip();
+        return;
+      }
+      const text = sel.toString();
+      const analysis = analyzeText(text);
+      const html = generateTooltipHTML(analysis);
+      const rect = sel.getRangeAt(0).getBoundingClientRect();
+      const x = Math.min(rect.left + 10, window.innerWidth - 420);
+      const y = rect.bottom + 10;
+      showTooltip(html, x, y, 'selection');
+    }, 10);
+  }
+
+  function onSelectionChange() {
+    if (!hasSelection() && currentTooltipType === 'selection') {
+      hideTooltip();
+    }
+  }
+
+  // Скрытие при клике вне тултипа
+  function onClick(e) {
+    if (!tooltip.contains(e.target) && currentTooltipType) {
+      hideTooltip();
+    }
+  }
+
+  // Делегирование событий
+  document.addEventListener('mouseover', onParagraphMouseOver, true);
+  document.addEventListener('mousemove', onParagraphMouseMove, true);
+  document.addEventListener('mouseout', onParagraphMouseOut, true);
+  document.addEventListener('mouseup', onMouseUp);
+  document.addEventListener('selectionchange', onSelectionChange);
+  document.addEventListener('click', onClick);
+
+  // Сброс при скролле (чтобы не мешал)
+  window.addEventListener('scroll', () => {
+    if (currentTooltipType) hideTooltip();
+  }, true);
+
+})();

@@ -1,14 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Word Frequency Popup",
+  "name": "Text Analyzer Tooltip",
   "version": "1.0",
-  "description": "При наведении на абзац показывает его текст с размерами слов по частоте корней, исключая водные слова.",
+  "description": "Показывает текст параграфа/выделения с размером слов в зависимости от частоты. Анализ как на istio.com.",
+  "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
-      "run_at": "document_end"
+      "css": ["tooltip.css"],
+      "run_at": "document_idle"
     }
-  ],
-  "permissions": []
+  ]
 }
