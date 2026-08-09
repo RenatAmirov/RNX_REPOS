@@ -1,15 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Text Analyzer Tooltip",
+  "name": "Word Frequency Popup",
   "version": "1.0",
-  "description": "Показывает текст параграфа/выделения с размером слов в зависимости от частоты. Анализ как на istio.com.",
+  "description": "Показывает всплывающее окно с текстом параграфа или выделения, где размер и жирность слов зависят от частоты (стемминг, стоп-слова).",
+  "permissions": [],
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
-      "css": ["tooltip.css"],
-      "run_at": "document_idle"
+      "run_at": "document_end"
     }
   ]
 }
