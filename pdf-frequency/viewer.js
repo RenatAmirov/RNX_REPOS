@@ -306,7 +306,6 @@ function mergeBboxes(items) {
   return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
 }
 
-// Отрисовка страницы и текстового слоя
 async function renderPage(num) {
   const page = await pdfDoc.getPage(num);
   const viewport = page.getViewport({ scale: 1.5 });
@@ -315,7 +314,6 @@ async function renderPage(num) {
   canvas.style.width = viewport.width + 'px';
   canvas.style.height = viewport.height + 'px';
 
-  // Обновляем размеры контейнера
   container.style.width = viewport.width + 'px';
   textLayerDiv.style.width = viewport.width + 'px';
   textLayerDiv.style.height = viewport.height + 'px';
@@ -323,7 +321,6 @@ async function renderPage(num) {
   const renderContext = { canvasContext: ctx, viewport };
   await page.render(renderContext).promise;
 
-  // Извлекаем текстовые блоки
   const textContent = await page.getTextContent();
   const items = textContent.items.map(item => ({
     str: item.str,
@@ -335,18 +332,15 @@ async function renderPage(num) {
 
   paragraphs = buildParagraphs(items);
 
-  // Рисуем прозрачный текст (для выделения и hover)
-  // Строим spans как в стандартном textLayer
+  // Исправленный вызов renderTextLayer
   textLayerDiv.innerHTML = '';
   const textLayerRenderTask = pdfjsLib.renderTextLayer({
-    textContentSource: textContent,
+    textContent: textContent,   // <-- исправлено
     container: textLayerDiv,
-    viewport,
-    textDivs: []
+    viewport: viewport
   });
   await textLayerRenderTask.promise;
 
-  // Вешаем события на textLayerDiv
   setupTextLayerEvents();
 }
 
