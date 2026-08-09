@@ -1,9 +1,7 @@
 // Настройки PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs/pdf.worker.min.js';
 
-// ------------------- Стеммеры и стоп-слова -------------------
-// (полностью копируем из предыдущего ответа, без изменений)
-
+// ------------------- Стеммеры и стоп-слова (без изменений) -------------------
 const step2list = {
   ational:"ate", tional:"tion", enci:"ence", anci:"ance", izer:"ize", bli:"ble", alli:"al",
   entli:"ent", eli:"e", ousli:"ous", ization:"ize", ation:"ate", ator:"ate", alism:"al",
@@ -23,11 +21,9 @@ function stemEn(w) {
   if (w.length < 3) return w;
   if (w.substr(0,2)==="qu") w = w.substr(2);
   let stem, suffix, fp;
-  // 1a
   let re = /^(.+?)(ss|i)es$/, re2 = /^(.+?)([^s])s$/;
   if (re.test(w)) w = w.replace(re,"$1$2");
   else if (re2.test(w)) w = w.replace(re2,"$1$2");
-  // 1b
   re = /^(.+?)eed$/; re2 = /^(.+?)(ed|ing)$/;
   if (re.test(w)) {
     fp = re.exec(w);
@@ -42,25 +38,21 @@ function stemEn(w) {
       else if (new RegExp("^"+C+v+"[^aeiouwxy]$").test(w)) w += "e";
     }
   }
-  // 1c
   re = /^(.+?)y$/;
   if (re.test(w)) {
     fp = re.exec(w); stem = fp[1];
     if (new RegExp(s_v).test(stem)) w = stem + "i";
   }
-  // 2
   re = /^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$/;
   if (re.test(w)) {
     fp = re.exec(w); stem = fp[1]; suffix = fp[2];
     if (new RegExp(mgr0).test(stem)) w = stem + step2list[suffix];
   }
-  // 3
   re = /^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/;
   if (re.test(w)) {
     fp = re.exec(w); stem = fp[1]; suffix = fp[2];
     if (new RegExp(mgr0).test(stem)) w = stem + step3list[suffix];
   }
-  // 4
   re = /^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/;
   re2 = /^(.+?)(s|t)(ion)$/;
   if (re.test(w)) {
@@ -70,14 +62,12 @@ function stemEn(w) {
     fp = re2.exec(w); stem = fp[1] + fp[2];
     if (new RegExp(mgr1).test(stem)) w = stem;
   }
-  // 5a
   re = /^(.+?)e$/;
   if (re.test(w)) {
     fp = re.exec(w); stem = fp[1];
     if (new RegExp(mgr1).test(stem) ||
        (new RegExp(meq1).test(stem) && !new RegExp("^"+C+v+"[^aeiouwxy]$").test(stem))) w = stem;
   }
-  // 5b
   re = /ll$/;
   if (re.test(w) && new RegExp(mgr1).test(w)) w = w.replace(/l$/,"");
   return w;
@@ -122,7 +112,6 @@ function getStem(word) {
   return isCyrillic(lower) ? stemRu(lower) : stemEn(lower);
 }
 
-// Стоп-слова
 const stopWordsSet = new Set();
 const rawRuStop = ["и","в","не","что","он","на","я","с","как","а","то","все","она","так","но","по","из","у","же","за","бы","от","для","мы","до","это","ты","его","к","о","ее","мне","быть","весь","этот","тот","мой","твой","свой","который","где","когда","там","потому","если","каждый","время","рука","слово","дело","сам","другой","наш","ваш","их","себя","ничто","кое","такой","очень","весьма","вдруг","впрочем","всегда","даже","еще","здесь","или","между","перед","под","при","про","со","через","чтобы","без","более","менее","всего","тоже","также","словно","точно","будто","никак","нибудь","ли","раз","сейчас","теперь","уже","опять","только","вон","вот","пусть","пока","хоть","иногда","ведь","либо","кроме","однако","ни","вообще","например","довольно","наконец","наверное","возможно","кажется","кстати","итак","следовательно","по-моему","ах","ох","эх","увы","ой","ого","фу","гм","ну","ага","угу","ай","эге","гей","ба","ура","ц","ау","мяу","гав"];
 const rawEnStop = ["i","me","my","myself","we","our","ours","you","your","yours","he","him","his","she","her","hers","it","its","they","them","their","theirs","what","which","who","whom","this","that","these","those","am","is","are","was","were","be","been","being","have","has","had","having","do","does","did","doing","a","an","the","and","but","if","or","because","as","until","while","of","at","by","for","with","about","against","between","into","through","during","before","after","above","below","to","from","up","down","in","out","on","off","over","under","again","further","then","once","here","there","when","where","why","how","all","both","each","few","more","most","other","some","such","no","nor","not","only","own","same","so","than","too","very","can","will","just","should","now","ah","oh","alas","wow","oops","hey","hurray","yes","yeah","nope","well","hmm","erm","uh","um","ouch","whoa"];
@@ -133,7 +122,6 @@ function isStopWord(stem) {
   return stopWordsSet.has(stem);
 }
 
-// ------------------- Утилиты -------------------
 function escapeHTML(str) {
   return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
@@ -233,13 +221,17 @@ function showTooltip(text, x, y, pin) {
   requestAnimationFrame(() => positionTooltip(x, y));
 }
 
-// ------------------- Логика PDF -------------------
+// ------------------- Навигация и рендеринг -------------------
 const container = document.getElementById('container');
 const canvas = document.getElementById('pdf-canvas');
 const textLayerDiv = document.getElementById('text-layer');
 const ctx = canvas.getContext('2d');
 
-// Получаем URL из параметров
+const pageNumInput = document.getElementById('page-num');
+const totalPagesSpan = document.getElementById('total-pages');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+
 const params = new URLSearchParams(window.location.search);
 const fileUrl = params.get('file');
 if (!fileUrl) {
@@ -249,64 +241,98 @@ if (!fileUrl) {
 
 let pdfDoc = null;
 let currentPage = 1;
-let paragraphs = []; // массив абзацев: {text, bbox: {x,y,w,h}}
 
-// Группируем текстовые блоки в абзацы
-function buildParagraphs(textItems) {
-  // textItems: [{str, transform: [a,b,c,d,tx,ty], width, height}]
-  if (!textItems.length) return [];
-  // сортируем по Y, затем X
-  const sorted = [...textItems].sort((a, b) => {
-    const yA = a.transform[5], yB = b.transform[5];
-    if (Math.abs(yA - yB) < 5) return a.transform[4] - b.transform[4];
-    return yA - yB;
-  });
+// Хранилище абзацев: Map<HTMLSpanElement, {text: string}> для каждого span'а на странице
+let spanToParagraph = new Map();
 
-  const paras = [];
-  let currentPara = { text: '', bbox: null, items: [] };
+// Группировка span'ов в абзацы на основе их положения в DOM
+function buildParagraphsFromSpans() {
+  spanToParagraph.clear();
+  const spans = textLayerDiv.querySelectorAll('span');
+  if (spans.length === 0) return;
 
-  for (const item of sorted) {
-    const x = item.transform[4];
-    const y = item.transform[5];
-    const w = item.width;
-    const h = item.height;
-    const prev = currentPara.items[currentPara.items.length - 1];
+  // 1. Группируем span'ы в строки (слова на одной строке)
+  const rows = [];
+  let currentRow = [];
+  let lastY = null;
+  const Y_THRESHOLD = 5; // пикселей – допустимое отклонение по вертикали для одной строки
 
-    if (prev) {
-      const prevY = prev.transform[5];
-      // новый абзац, если разрыв по вертикали больше высоты строки * 1.5
-      if (y - (prevY + prev.height) > prev.height * 1.5) {
-        // сохраняем предыдущий абзац
-        if (currentPara.text.trim()) {
-          const merged = mergeBboxes(currentPara.items);
-          paras.push({ text: currentPara.text.trim(), bbox: merged });
-        }
-        currentPara = { text: '', bbox: null, items: [] };
+  for (const span of spans) {
+    const rect = span.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) continue; // пустые пропускаем
+
+    const y = rect.top;
+    if (lastY === null || Math.abs(y - lastY) <= Y_THRESHOLD) {
+      currentRow.push(span);
+    } else {
+      if (currentRow.length > 0) rows.push(currentRow);
+      currentRow = [span];
+    }
+    lastY = y;
+  }
+  if (currentRow.length > 0) rows.push(currentRow);
+
+  // 2. Группируем строки в абзацы (по расстоянию между строками)
+  const paragraphs = [];
+  let currentPara = [];
+  let lastRowBottom = null;
+  const LINE_GAP_THRESHOLD = 10; // если расстояние между низом предыдущей строки и верхом текущей больше этого – новый абзац
+
+  for (const row of rows) {
+    const firstSpan = row[0];
+    const rowTop = firstSpan.getBoundingClientRect().top;
+    if (lastRowBottom !== null) {
+      const gap = rowTop - lastRowBottom;
+      if (gap > LINE_GAP_THRESHOLD) {
+        // Новый абзац
+        if (currentPara.length > 0) paragraphs.push(currentPara);
+        currentPara = [];
       }
     }
-    currentPara.items.push(item);
-    currentPara.text += item.str + (item.hasEOL ? ' ' : '');
+    currentPara.push(row);
+    // Вычисляем нижнюю границу строки (берем максимальную высоту среди span'ов в строке)
+    let maxBottom = 0;
+    for (const sp of row) {
+      const b = sp.getBoundingClientRect().bottom;
+      if (b > maxBottom) maxBottom = b;
+    }
+    lastRowBottom = maxBottom;
   }
-  if (currentPara.text.trim()) {
-    const merged = mergeBboxes(currentPara.items);
-    paras.push({ text: currentPara.text.trim(), bbox: merged });
-  }
-  return paras;
-}
+  if (currentPara.length > 0) paragraphs.push(currentPara);
 
-function mergeBboxes(items) {
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  for (const it of items) {
-    const x = it.transform[4], y = it.transform[5];
-    minX = Math.min(minX, x);
-    minY = Math.min(minY, y);
-    maxX = Math.max(maxX, x + it.width);
-    maxY = Math.max(maxY, y + it.height);
+  // 3. Для каждого span'а записываем его абзац (собираем текст абзаца из всех span'ов)
+  for (const para of paragraphs) {
+    // Собираем все span'ы абзаца в порядке чтения (слева направо, сверху вниз)
+    const spansInPara = [];
+    for (const row of para) {
+      // Сортируем span'ы в строке по X
+      row.sort((a, b) => {
+        const aRect = a.getBoundingClientRect();
+        const bRect = b.getBoundingClientRect();
+        return aRect.left - bRect.left;
+      });
+      spansInPara.push(...row);
+    }
+
+    // Текст абзаца: объединяем текстовое содержимое span'ов с пробелами
+    let paraText = '';
+    for (const span of spansInPara) {
+      paraText += span.textContent + ' ';
+    }
+    paraText = paraText.replace(/\s+/g, ' ').trim();
+
+    // Привязываем каждый span к этому тексту
+    for (const span of spansInPara) {
+      spanToParagraph.set(span, paraText);
+    }
   }
-  return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
 }
 
 async function renderPage(num) {
+  if (!pdfDoc || num < 1 || num > pdfDoc.numPages) return;
+  currentPage = num;
+  pageNumInput.value = num;
+
   const page = await pdfDoc.getPage(num);
   const viewport = page.getViewport({ scale: 1.5 });
   canvas.width = viewport.width;
@@ -322,58 +348,43 @@ async function renderPage(num) {
   await page.render(renderContext).promise;
 
   const textContent = await page.getTextContent();
-  const items = textContent.items.map(item => ({
-    str: item.str,
-    transform: item.transform,
-    width: item.width,
-    height: item.height,
-    hasEOL: item.hasEOL || false
-  }));
 
-  paragraphs = buildParagraphs(items);
-
-  // Исправленный вызов renderTextLayer
+  // Рендерим текстовый слой
   textLayerDiv.innerHTML = '';
   const textLayerRenderTask = pdfjsLib.renderTextLayer({
-    textContent: textContent,   // <-- исправлено
+    textContent: textContent,
     container: textLayerDiv,
     viewport: viewport
   });
   await textLayerRenderTask.promise;
 
+  // После создания всех span'ов строим карту абзацев
+  buildParagraphsFromSpans();
   setupTextLayerEvents();
 }
 
-// События: hover по абзацам и выделение текста
-function getParagraphAtPoint(x, y) {
-  // координаты относительно страницы
-  for (const para of paragraphs) {
-    const { bbox } = para;
-    if (x >= bbox.x && x <= bbox.x + bbox.w && y >= bbox.y && y <= bbox.y + bbox.h) {
-      return para;
-    }
-  }
-  return null;
-}
-
 function setupTextLayerEvents() {
+  // Удаляем старые обработчики (если есть) – для простоты назначим новые через on*
   textLayerDiv.onmousemove = function(e) {
     if (pinned) return;
-    const rect = textLayerDiv.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const x = (e.clientX - rect.left) * scaleX;
-    const y = (e.clientY - rect.top) * scaleY;
-    const para = getParagraphAtPoint(x, y);
-    if (para) {
-      showTooltip(para.text, e.clientX, e.clientY, false);
-      clearTimeout(hideTimer);
-    } else {
-      clearTimeout(hideTimer);
-      hideTimer = setTimeout(() => {
-        if (!pinned && !tooltip.matches(':hover')) hideTooltip();
-      }, 150);
+    // Ищем span, над которым находится мышь
+    let target = e.target;
+    while (target && target !== textLayerDiv) {
+      if (target.tagName === 'SPAN') {
+        const text = spanToParagraph.get(target);
+        if (text) {
+          showTooltip(text, e.clientX, e.clientY, false);
+          clearTimeout(hideTimer);
+          return;
+        }
+      }
+      target = target.parentElement;
     }
+    // Мышь не над текстовым span – возможно, над пустым местом, скроем тултип с задержкой
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      if (!pinned && !tooltip.matches(':hover')) hideTooltip();
+    }, 150);
   };
 
   textLayerDiv.onmouseleave = function() {
@@ -383,7 +394,6 @@ function setupTextLayerEvents() {
     }, 150);
   };
 
-  // Выделение мышью
   textLayerDiv.addEventListener('mouseup', function(e) {
     setTimeout(() => {
       const sel = window.getSelection();
@@ -394,7 +404,6 @@ function setupTextLayerEvents() {
     }, 10);
   });
 
-  // Выделение клавиатурой (с задержкой)
   document.addEventListener('selectionchange', function() {
     if (pinned) return;
     clearTimeout(selectionTimer);
@@ -411,7 +420,6 @@ function setupTextLayerEvents() {
     }, 400);
   });
 
-  // Закрытие по клику или клавише
   document.addEventListener('click', function() {
     if (pinned) hideTooltip();
   });
@@ -423,8 +431,26 @@ function setupTextLayerEvents() {
 // Инициализация
 (async function init() {
   createTooltip();
+
   const loadingTask = pdfjsLib.getDocument({ url: fileUrl, cMapUrl: 'pdfjs/cmaps/', cMapPacked: true });
   pdfDoc = await loadingTask.promise;
+  totalPagesSpan.textContent = pdfDoc.numPages;
+  pageNumInput.max = pdfDoc.numPages;
+
   await renderPage(1);
-  // Для простоты показываем только первую страницу. Можно добавить переключение страниц, но это основа.
+
+  prevBtn.addEventListener('click', async () => {
+    if (currentPage <= 1) return;
+    await renderPage(currentPage - 1);
+  });
+  nextBtn.addEventListener('click', async () => {
+    if (currentPage >= pdfDoc.numPages) return;
+    await renderPage(currentPage + 1);
+  });
+  pageNumInput.addEventListener('change', async () => {
+    let page = parseInt(pageNumInput.value, 10);
+    if (isNaN(page) || page < 1) page = 1;
+    if (page > pdfDoc.numPages) page = pdfDoc.numPages;
+    if (page !== currentPage) await renderPage(page);
+  });
 })();

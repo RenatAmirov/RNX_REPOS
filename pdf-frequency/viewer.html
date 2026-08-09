@@ -8,9 +8,49 @@
       margin: 0;
       background: #525659;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       overflow-y: auto;
       height: 100vh;
+    }
+    #toolbar {
+      background: #323639;
+      color: white;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #toolbar button {
+      background: #565a5e;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #toolbar button:hover {
+      background: #727679;
+    }
+    #page-num {
+      width: 50px;
+      text-align: center;
+      font-size: 14px;
+      padding: 4px;
+      border: 1px solid #888;
+      border-radius: 3px;
+      background: white;
+      color: black;
+    }
+    #total-pages {
+      font-size: 14px;
     }
     #container {
       position: relative;
@@ -62,6 +102,14 @@
   </style>
 </head>
 <body>
+  <div id="toolbar">
+    <button id="prev">◀ Назад</button>
+    <span>Страница</span>
+    <input id="page-num" type="number" min="1" value="1">
+    <span>из</span>
+    <span id="total-pages">0</span>
+    <button id="next">Вперёд ▶</button>
+  </div>
   <div id="container">
     <canvas id="pdf-canvas"></canvas>
     <div id="text-layer" class="textLayer"></div>
