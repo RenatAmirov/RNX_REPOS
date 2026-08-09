@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PDF Word Frequency Viewer</title>
+  <style>
+    body {
+      margin: 0;
+      background: #525659;
+      display: flex;
+      justify-content: center;
+      overflow-y: auto;
+      height: 100vh;
+    }
+    #container {
+      position: relative;
+      margin: 10px 0;
+    }
+    #pdf-canvas {
+      display: block;
+      margin: 0 auto;
+      box-shadow: 0 0 10px rgba(0,0,0,.5);
+    }
+    .textLayer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      opacity: 0.001;  /* почти невидимый, но ловит события */
+      line-height: 1.0;
+    }
+    .textLayer span {
+      color: transparent;
+      position: absolute;
+      white-space: pre;
+      cursor: default;
+      transform-origin: 0% 0%;
+    }
+    /* Tooltip */
+    #__freq_tooltip__ {
+      all: initial;
+      position: fixed;
+      display: none;
+      z-index: 2147483647;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.18);
+      padding: 12px 16px;
+      max-width: 620px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #222;
+      white-space: pre-wrap;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <canvas id="pdf-canvas"></canvas>
+    <div id="text-layer" class="textLayer"></div>
+  </div>
+  <script src="pdfjs/pdf.min.js"></script>
+  <script src="viewer.js"></script>
+</body>
+</html>

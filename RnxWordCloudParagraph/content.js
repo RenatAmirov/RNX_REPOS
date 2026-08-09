@@ -255,7 +255,7 @@
     const MIN_FONT = 12;
     const MAX_FONT = 36;
     const MIN_WEIGHT = 400;
-    const MAX_WEIGHT = 900;
+    const MAX_WEIGHT = 700;
 
     function freqForToken(word) {
       if (isStopWord(word.toLowerCase())) return 0;
@@ -304,7 +304,7 @@
       border: 1px solid #aaa;
       border-radius: 6px;
       padding: 12px 14px;
-      max-width: 480px;
+      max-width: 800px;
       max-height: 80vh;
       overflow-y: auto;
       box-shadow: 0 4px 16px rgba(0,0,0,0.2);
