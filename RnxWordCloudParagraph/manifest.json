@@ -1,15 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "Word Frequency Tooltip",
+  "name": "Word Frequency Popup",
   "version": "1.0",
-  "description": "При наведении на параграф показывает текст с размером слов по частоте (как анализ водности на istio.com).",
-  "host_permissions": ["<all_urls>"],
+  "description": "При наведении на абзац показывает его текст с размерами слов по частоте корней, исключая водные слова.",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
-      "run_at": "document_idle"
+      "run_at": "document_end"
     }
   ],
-  "icons": { "48": "icon.png" }
+  "permissions": []
 }
