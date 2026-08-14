@@ -1,0 +1,16 @@
+from PyQt6 import QtWidgets
+import sys
+app = QtWidgets.QApplication(sys.argv)
+window = QtWidgets.QWidget()
+window.setWindowTitle("Класс QLabel")
+window.resize(300, 80)
+label = QtWidgets.QLabel("&Пароль")
+lineEdit = QtWidgets.QLineEdit()
+label.setBuddy(lineEdit)
+vbox = QtWidgets.QVBoxLayout()
+vbox.addWidget(label)
+vbox.addWidget(lineEdit)
+vbox.addWidget(QtWidgets.QLineEdit())
+window.setLayout(vbox)
+window.show()
+sys.exit(app.exec())

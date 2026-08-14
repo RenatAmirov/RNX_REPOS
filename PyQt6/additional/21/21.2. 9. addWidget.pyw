@@ -1,0 +1,16 @@
+from PyQt6 import QtCore, QtWidgets
+import sys
+app = QtWidgets.QApplication(sys.argv)
+window = QtWidgets.QWidget()
+window.setWindowTitle("Добавление компонентов")
+window.resize(450, 50)
+button1 = QtWidgets.QPushButton("1")
+button2 = QtWidgets.QPushButton("2")
+button3 = QtWidgets.QPushButton("3")
+hbox = QtWidgets.QHBoxLayout()
+hbox.addWidget(button1, 10, QtCore.Qt.AlignmentFlag.AlignRight)
+hbox.addWidget(button2, stretch=10)
+hbox.addWidget(button3, alignment=QtCore.Qt.AlignmentFlag.AlignRight)
+window.setLayout(hbox)
+window.show()
+sys.exit(app.exec())

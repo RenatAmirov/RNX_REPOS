@@ -1,0 +1,18 @@
+from PyQt6 import QtWidgets
+import sys
+app = QtWidgets.QApplication(sys.argv)
+window = QtWidgets.QWidget()
+window.setWindowTitle("Класс QLCDNumber")
+window.resize(300, 150)
+lcd = QtWidgets.QLCDNumber(9)
+lcd.setSmallDecimalPoint(True)
+lcd.display(255.49)
+lcd2 = QtWidgets.QLCDNumber(9)
+lcd2.setSmallDecimalPoint(False)
+lcd2.display(255.49)
+box = QtWidgets.QVBoxLayout()
+box.addWidget(lcd)
+box.addWidget(lcd2)
+window.setLayout(box)
+window.show()
+sys.exit(app.exec())

@@ -1,0 +1,35 @@
+from PyQt6 import QtCore, QtWidgets, QtGui, QtPrintSupport
+import sys
+app = QtWidgets.QApplication(sys.argv)
+writer = QtGui.QPdfWriter("output.pdf")
+writer.setCreator("Владимир Дронов")
+writer.setTitle("Тест")
+layout = QtGui.QPageLayout()
+layout.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A5))
+layout.setOrientation(QtGui.QPageLayout.Orientation.Portrait)
+writer.setPageLayout(layout)
+painter = QtGui.QPainter()
+painter.begin(writer)
+color = QtGui.QColor(QtCore.Qt.GlobalColor.black)
+painter.setPen(QtGui.QPen(color))
+painter.setBrush(QtGui.QBrush(color))
+font = QtGui.QFont("Verdana", pointSize=42)
+painter.setFont(font)
+# Получаем размеры страницы в пикселах для текущего экранного разрешения
+page_size = layout.paintRectPixels(writer.resolution())
+page_width = int(page_size.width())
+page_height = int(page_size.height())
+painter.drawText(10, page_height // 2 - 50, page_width - 20, 50,
+        QtCore.Qt.AlignmentFlag.AlignCenter | QtCore.Qt.TextFlag.TextDontClip,
+        "QPdfWriter")
+layout.setOrientation(QtGui.QPageLayout.Orientation.Landscape)
+writer.setPageLayout(layout)
+writer.newPage()
+page_size = layout.paintRectPixels(writer.resolution())
+page_width = int(page_size.width())
+page_height = int(page_size.height())
+pixmap = QtGui.QPixmap("img.jpg")
+pixmap = pixmap.scaled(page_width, page_height,
+         aspectRatioMode=QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+painter.drawPixmap(0, 0, pixmap)
+painter.end()

@@ -1,0 +1,17 @@
+from PyQt6 import QtWidgets
+import sys
+app = QtWidgets.QApplication(sys.argv)
+window = QtWidgets.QWidget()
+window.setWindowTitle("Класс QToolBox")
+window.resize(300, 250)
+toolBox = QtWidgets.QToolBox()
+toolBox.addItem(QtWidgets.QLabel("Содержимое вкладки 1"), "Вкладка &1")
+toolBox.addItem(QtWidgets.QLabel("Содержимое вкладки 2"), "Вкладка &2")
+toolBox.setItemToolTip(0, "Это текст подсказки для вкладки 1")
+toolBox.setItemToolTip(1, "Это текст подсказки для вкладки 2")
+toolBox.setCurrentIndex(0)
+vbox = QtWidgets.QVBoxLayout()
+vbox.addWidget(toolBox)
+window.setLayout(vbox)
+window.show()
+sys.exit(app.exec())

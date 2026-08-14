@@ -1,7 +1,7 @@
 // Настройки PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs/pdf.worker.min.js';
 
-// ------------------- Стеммеры и стоп-слова (без изменений) -------------------
+// ------------------- Стеммеры и стоп-слова -------------------
 const step2list = {
   ational:"ate", tional:"tion", enci:"ence", anci:"ance", izer:"ize", bli:"ble", alli:"al",
   entli:"ent", eli:"e", ousli:"ous", ization:"ize", ation:"ate", ator:"ate", alism:"al",
@@ -201,12 +201,18 @@ function hideTooltip() {
 
 function positionTooltip(x, y) {
   const rect = tooltip.getBoundingClientRect();
-  const vw = window.innerWidth, vh = window.innerHeight;
-  let left = x + 12, top = y + 12;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const toolbarHeight = document.getElementById('toolbar').getBoundingClientRect().height;
+
+  let left = x + 12;
+  let top = y + 12;
+
   if (left + rect.width > vw - 8) left = vw - rect.width - 8;
   if (top + rect.height > vh - 8) top = vh - rect.height - 8;
   if (left < 8) left = 8;
-  if (top < 8) top = 8;
+  if (top < toolbarHeight + 8) top = toolbarHeight + 8;
+
   tooltip.style.left = left + 'px';
   tooltip.style.top = top + 'px';
 }
@@ -215,6 +221,17 @@ function showTooltip(text, x, y, pin) {
   if (!tooltip) createTooltip();
   if (pinned && !pin) return;
   clearTimeout(selectionTimer);
+
+  // Размер tooltip – как PDF-контейнер, но не больше экрана (с учётом панели инструментов)
+  const containerRect = document.getElementById('container').getBoundingClientRect();
+  const toolbarHeight = document.getElementById('toolbar').getBoundingClientRect().height;
+  const maxWidth = Math.min(containerRect.width, window.innerWidth - 40);
+  const maxHeight = Math.min(containerRect.height, window.innerHeight - toolbarHeight - 40);
+
+  tooltip.style.maxWidth = maxWidth + 'px';
+  tooltip.style.maxHeight = maxHeight + 'px';
+  // width/height оставляем auto, чтобы контент мог быть меньше
+
   tooltip.innerHTML = buildFormattedText(text);
   tooltip.style.display = 'block';
   pinned = !!pin;
@@ -241,26 +258,22 @@ if (!fileUrl) {
 
 let pdfDoc = null;
 let currentPage = 1;
-
-// Хранилище абзацев: Map<HTMLSpanElement, {text: string}> для каждого span'а на странице
 let spanToParagraph = new Map();
 
-// Группировка span'ов в абзацы на основе их положения в DOM
 function buildParagraphsFromSpans() {
   spanToParagraph.clear();
   const spans = textLayerDiv.querySelectorAll('span');
   if (spans.length === 0) return;
 
-  // 1. Группируем span'ы в строки (слова на одной строке)
+  // Группируем span'ы в строки
   const rows = [];
   let currentRow = [];
   let lastY = null;
-  const Y_THRESHOLD = 5; // пикселей – допустимое отклонение по вертикали для одной строки
+  const Y_THRESHOLD = 5;
 
   for (const span of spans) {
     const rect = span.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) continue; // пустые пропускаем
-
+    if (rect.width === 0 || rect.height === 0) continue;
     const y = rect.top;
     if (lastY === null || Math.abs(y - lastY) <= Y_THRESHOLD) {
       currentRow.push(span);
@@ -272,11 +285,11 @@ function buildParagraphsFromSpans() {
   }
   if (currentRow.length > 0) rows.push(currentRow);
 
-  // 2. Группируем строки в абзацы (по расстоянию между строками)
+  // Группируем строки в абзацы
   const paragraphs = [];
   let currentPara = [];
   let lastRowBottom = null;
-  const LINE_GAP_THRESHOLD = 10; // если расстояние между низом предыдущей строки и верхом текущей больше этого – новый абзац
+  const LINE_GAP_THRESHOLD = 10;
 
   for (const row of rows) {
     const firstSpan = row[0];
@@ -284,13 +297,11 @@ function buildParagraphsFromSpans() {
     if (lastRowBottom !== null) {
       const gap = rowTop - lastRowBottom;
       if (gap > LINE_GAP_THRESHOLD) {
-        // Новый абзац
         if (currentPara.length > 0) paragraphs.push(currentPara);
         currentPara = [];
       }
     }
     currentPara.push(row);
-    // Вычисляем нижнюю границу строки (берем максимальную высоту среди span'ов в строке)
     let maxBottom = 0;
     for (const sp of row) {
       const b = sp.getBoundingClientRect().bottom;
@@ -300,12 +311,10 @@ function buildParagraphsFromSpans() {
   }
   if (currentPara.length > 0) paragraphs.push(currentPara);
 
-  // 3. Для каждого span'а записываем его абзац (собираем текст абзаца из всех span'ов)
+  // Привязываем каждый span к тексту его абзаца
   for (const para of paragraphs) {
-    // Собираем все span'ы абзаца в порядке чтения (слева направо, сверху вниз)
     const spansInPara = [];
     for (const row of para) {
-      // Сортируем span'ы в строке по X
       row.sort((a, b) => {
         const aRect = a.getBoundingClientRect();
         const bRect = b.getBoundingClientRect();
@@ -313,15 +322,11 @@ function buildParagraphsFromSpans() {
       });
       spansInPara.push(...row);
     }
-
-    // Текст абзаца: объединяем текстовое содержимое span'ов с пробелами
     let paraText = '';
     for (const span of spansInPara) {
       paraText += span.textContent + ' ';
     }
     paraText = paraText.replace(/\s+/g, ' ').trim();
-
-    // Привязываем каждый span к этому тексту
     for (const span of spansInPara) {
       spanToParagraph.set(span, paraText);
     }
@@ -349,7 +354,6 @@ async function renderPage(num) {
 
   const textContent = await page.getTextContent();
 
-  // Рендерим текстовый слой
   textLayerDiv.innerHTML = '';
   const textLayerRenderTask = pdfjsLib.renderTextLayer({
     textContent: textContent,
@@ -358,16 +362,13 @@ async function renderPage(num) {
   });
   await textLayerRenderTask.promise;
 
-  // После создания всех span'ов строим карту абзацев
   buildParagraphsFromSpans();
   setupTextLayerEvents();
 }
 
 function setupTextLayerEvents() {
-  // Удаляем старые обработчики (если есть) – для простоты назначим новые через on*
   textLayerDiv.onmousemove = function(e) {
     if (pinned) return;
-    // Ищем span, над которым находится мышь
     let target = e.target;
     while (target && target !== textLayerDiv) {
       if (target.tagName === 'SPAN') {
@@ -380,7 +381,6 @@ function setupTextLayerEvents() {
       }
       target = target.parentElement;
     }
-    // Мышь не над текстовым span – возможно, над пустым местом, скроем тултип с задержкой
     clearTimeout(hideTimer);
     hideTimer = setTimeout(() => {
       if (!pinned && !tooltip.matches(':hover')) hideTooltip();
